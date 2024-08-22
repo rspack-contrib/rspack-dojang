@@ -18,7 +18,7 @@
 //! manually provide the template as string using `add` method.  
 //!
 //! ```
-//! use dojang::dojang::Dojang;
+//! use rspack_dojang::dojang::Dojang;
 //!
 //! fn main() {
 //!   let mut dj = Dojang::new();
@@ -48,7 +48,7 @@
 //! example,
 //!
 //! ```
-//! use dojang::dojang::Dojang;
+//! use rspack_dojang::dojang::Dojang;
 //!
 //! fn add(a: i64, b: i64) -> i64 {
 //!   a + b

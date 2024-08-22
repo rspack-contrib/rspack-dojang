@@ -1,4 +1,7 @@
-# Dojang
+# rspack_dojang
+
+> [!NOTE]  
+> This is a fork of [dojang](https://github.com/kev0960/dojang), and will be used in Rspack to fix bugs and add some Rspack customized features.
 
 ![Test and Coverage](https://github.com/kev0960/dojang/actions/workflows/test.yaml/badge.svg)
 
@@ -15,7 +18,7 @@
 ## How to use?
 
 ```rust
-use dojang::Dojang;
+use rspack_dojang::Dojang;
 use serde_json::Value;
 
 // Create a template engine Dojang.

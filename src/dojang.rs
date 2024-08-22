@@ -59,7 +59,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = dojang::Dojang::new();
+    /// let mut dojang = rspack_dojang::Dojang::new();
     ///
     /// // Constructs the template "tmpl" with the content "<%= 1 + 1 %>".
     /// dojang.add("tmpl".to_string(), "<%= 1 + 1 %>".to_string());
@@ -96,7 +96,7 @@ impl Dojang {
     ///
     /// ```
     /// use serde_json::Value;
-    /// use dojang::dojang::Dojang;
+    /// use rspack_dojang::dojang::Dojang;
     ///
     /// fn func(a: i64) -> i64 { a + 1 }
     /// fn func2(mut a: String, b: String) -> String {
@@ -201,7 +201,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = dojang::Dojang::new();
+    /// let mut dojang = rspack_dojang::Dojang::new();
     ///
     /// // Add every files under ./tests as a template.
     /// dojang.load("./tests");
@@ -256,7 +256,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = dojang::Dojang::new();
+    /// let mut dojang = rspack_dojang::Dojang::new();
     ///
     /// // Render 'template_file' with the provided context.
     /// dojang.load("./tests").unwrap().render("template_file", serde_json::from_str(r#"{ "test" : { "title" : "Welcome to Dojang"} }"#).unwrap());
