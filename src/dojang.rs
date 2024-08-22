@@ -9,6 +9,19 @@ use std::io;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+#[derive(Debug,Clone)]
+pub struct DojangOptions {
+    pub escape: String,
+    pub unescape: String
+}
+impl Default for DojangOptions {
+    fn default() -> Self {
+        Self {
+            escape: "=".to_string(),
+            unescape: "-".to_string()
+        }
+    }
+}
 /// HTML template rendering engine that should be constructed for once.
 pub struct Dojang {
     /// Mapping between the template file name and the renderer along with the file content.
@@ -19,9 +32,16 @@ pub struct Dojang {
 
     /// Files read from "include". Those are cached here.
     includes: Mutex<HashMap<String, String>>,
+
+    // part of ejs config options, see https://github.com/mde/ejs#options
+    options: DojangOptions
+
 }
 
 impl Dojang {
+    pub fn with_options(&mut self,options:DojangOptions){
+        self.options = options;
+    }
     /// Creates a template engine.
     pub fn new() -> Self {
         let mut functions = HashMap::<String, FunctionContainer>::new();
@@ -44,6 +64,7 @@ impl Dojang {
             templates: HashMap::new(),
             functions,
             includes: Mutex::new(HashMap::new()),
+            options: Default::default()
         }
     }
 
@@ -65,7 +86,7 @@ impl Dojang {
     /// dojang.add("tmpl".to_string(), "<%= 1 + 1 %>".to_string());
     /// ```
     pub fn add(&mut self, file_name: String, template: String) -> Result<&Self, String> {
-        if self.templates.contains_key(&file_name) {
+       if self.templates.contains_key(&file_name) {
             return Err(format!("{} is already added as a template", file_name));
         }
 
@@ -76,6 +97,19 @@ impl Dojang {
 
         Ok(self)
     }
+    pub fn add_with_option(&mut self, file_name: String, template: String) -> Result<&Self, String> {
+        if self.templates.contains_key(&file_name) {
+            return Err(format!("{} is already added as a template", file_name));
+        }
+
+        self.templates.insert(
+            file_name,
+            (Executer::new(Parser::parse_with_options(&template, self.options.clone())?)?, template),
+        );
+
+        Ok(self)
+    }
+
 
     /// Adds a function that can be used in the template.
     ///
