@@ -372,6 +372,41 @@ pub fn to_function_container4<
 }
 
 #[test]
+fn escape_unescape() {
+    let template = "<%= myHtml %><%- myHtml %>".to_string();
+    let mut dojang = Dojang::new();
+    assert!(dojang.add("some_template".to_string(), template).is_ok());
+
+    assert_eq!(
+        dojang
+            .render(
+                "some_template",
+                serde_json::from_str(r#"{ "myHtml": "<span>Rspack</span>" }"#).unwrap()
+            )
+            .unwrap(),
+        "&lt;span&gt;Rspack&lt;&#x2F;span&gt;<span>Rspack</span>"
+    );
+}
+#[test]
+fn custom_escape_unescape() {
+    let template = "<%= myHtml %><%- myHtml %>".to_string();
+    let mut dojang = Dojang::new();
+    dojang.with_options(DojangOptions {
+        escape: "-".to_string(),
+        unescape: "=".to_string()
+    });
+    assert!(dojang.add_with_option("some_template".to_string(), template).is_ok());
+    assert_eq!(
+        dojang
+            .render(
+                "some_template",
+                serde_json::from_str(r#"{ "myHtml": "<span>Rspack</span>" }"#).unwrap()
+            )
+            .unwrap(),
+        "<span>Rspack</span>&lt;span&gt;Rspack&lt;&#x2F;span&gt;"
+    );
+}
+#[test]
 fn render() {
     let template = "<% if a == 1 { %> Hi <% } else { %><%= a %><% } %>".to_string();
     let mut dojang = Dojang::new();
