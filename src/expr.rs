@@ -1,5 +1,7 @@
 use serde_json::Value;
 
+use crate::dojang::DojangOptions;
+
 #[derive(PartialEq, Debug, Clone)]
 pub enum Op {
     Not,          // !
@@ -101,7 +103,10 @@ pub struct Parser {
 }
 
 impl Parser {
-    pub fn parse(mut template: &str) -> Result<Self, String> {
+    pub fn parse(template: &str) -> Result<Self, String> {
+        Parser::parse_with_options(template, DojangOptions::default())
+    }
+    pub fn parse_with_options(mut template: &str, options: DojangOptions) -> Result<Self, String> {
         let mut parse_tree = Vec::new();
 
         let mut index_offset = 0;
@@ -122,14 +127,18 @@ impl Parser {
                     match after_tag.find("%>") {
                         Some(tag_end) => {
                             let tag_to_parse;
+                            //let escape = options.escape.as_str();
+                            let escape = options.escape.as_str();
+                            let unescape = options.unescape.as_str();
+                            
                             match &template[tag_start + 2..tag_start + 3] {
-                                "=" => {
+                                str if str == escape => {
                                     parse_tree.push(Action::Show(Show::ExprEscaped(Tokens {
                                         ops: Vec::new(),
                                     })));
                                     tag_to_parse = &after_tag[1..tag_end];
                                 }
-                                "-" => {
+                                str if str == unescape => {
                                     parse_tree.push(Action::Show(Show::ExprUnescaped(Tokens {
                                         ops: Vec::new(),
                                     })));
