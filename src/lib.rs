@@ -120,3 +120,4 @@ pub mod func_helper;
 
 pub use crate::context::FunctionContainer;
 pub use crate::dojang::Dojang;
+pub use crate::expr::Operand;
