@@ -1,6 +1,6 @@
 [package]
 name = "rspack_dojang"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["Jaebum Lee <kev0960@gmail.com>"]
 edition = "2021"
 description = "Dojang, a EJS like Html Template Engine."
