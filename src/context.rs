@@ -13,6 +13,7 @@ pub struct Context {
 }
 
 pub enum FunctionContainer {
+    F0(Box<dyn Fn() -> Operand + Send + Sync>),
     F1(Box<dyn Fn(Operand) -> Operand + Send + Sync>),
     F2(Box<dyn Fn(Operand, Operand) -> Operand + Send + Sync>),
     F3(Box<dyn Fn(Operand, Operand, Operand) -> Operand + Send + Sync>),
@@ -23,6 +24,7 @@ impl fmt::Debug for FunctionContainer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("FunctionContainer");
         match self {
+            FunctionContainer::F0(_) => f.field("F0", &0),
             FunctionContainer::F1(_) => f.field("F1", &1),
             FunctionContainer::F2(_) => f.field("F2", &2),
             FunctionContainer::F3(_) => f.field("F3", &3),
@@ -36,6 +38,7 @@ impl fmt::Debug for FunctionContainer {
 impl FunctionContainer {
     pub fn param_num(&self) -> usize {
         match self {
+            FunctionContainer::F0(_) => 0,
             FunctionContainer::F1(_) => 1,
             FunctionContainer::F2(_) => 2,
             FunctionContainer::F3(_) => 3,
@@ -249,6 +252,7 @@ impl ComputeExpr for Eval {
                         }
 
                         let return_value = match function_to_run {
+                            FunctionContainer::F0(f) => f(),
                             FunctionContainer::F1(f) => f(evals.pop().unwrap()),
                             FunctionContainer::F2(f) => {
                                 let p2 = evals.pop().unwrap();

@@ -25,16 +25,16 @@ impl Default for DojangOptions {
 /// HTML template rendering engine that should be constructed for once.
 pub struct Dojang {
     /// Mapping between the template file name and the renderer along with the file content.
-    templates: HashMap<String, (Executer, String)>,
+    pub templates: HashMap<String, (Executer, String)>,
 
     /// Map of the registered functions.
-    functions: HashMap<String, FunctionContainer>,
+    pub functions: HashMap<String, FunctionContainer>,
 
     /// Files read from "include". Those are cached here.
-    includes: Mutex<HashMap<String, String>>,
+    pub includes: Mutex<HashMap<String, String>>,
 
     // part of ejs config options, see https://github.com/mde/ejs#options
-    options: DojangOptions
+    pub options: DojangOptions
 
 }
 
@@ -142,6 +142,23 @@ impl Dojang {
     /// dj.add_function_1("func".to_string(), func);
     /// dj.add_function_2("func2".to_string(), func2);
     /// ```
+
+    pub fn add_function_0<V: 'static>(
+        &mut self,
+        function_name: String,
+        function: fn() -> V,
+    ) -> Result<&Self, String>
+    where
+        V: Into<Operand>,
+    {
+        if self.functions.contains_key(&function_name) {
+            return Err(format!("{} is already added as a function", function_name));
+        }
+
+        self.functions
+            .insert(function_name, to_function_container0(function));
+        Ok(self)
+    }
 
     pub fn add_function_1<T: 'static, V: 'static>(
         &mut self,
@@ -315,6 +332,14 @@ fn get_all_file_path_under_dir(dir_name: &str) -> io::Result<Vec<PathBuf>> {
         .into_iter()
         .map(|x| x.map(|entry| entry.path()))
         .collect()
+}
+
+pub fn to_function_container0<V: 'static + Into<Operand>>(
+    func: fn() -> V,
+) -> FunctionContainer {
+    FunctionContainer::F0(Box::new(move || -> Operand {
+        func().into()
+    }))
 }
 
 pub fn to_function_container1<T: 'static + From<Operand>, V: 'static + Into<Operand>>(
